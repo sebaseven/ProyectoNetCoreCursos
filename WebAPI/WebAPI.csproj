@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Aplicacion-BL\Aplicacion.csproj" />
     <ProjectReference Include="..\Dominio-ML\Dominio.csproj" />
     <ProjectReference Include="..\Persistencia-DL\Persistencia.csproj" />

@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using Persistencia;
 using Aplicacion.Cursos;
+using FluentValidation.AspNetCore;
+using Aplicacion_BL.Cursos;
 
 namespace WebAPI
 {
@@ -35,7 +37,7 @@ namespace WebAPI
             });
             //agregamos el servicio a la api de consulta a traves de mediador/manejador
             services.AddMediatR(typeof(Consulta.Manejador).Assembly);
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Nuevo>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
