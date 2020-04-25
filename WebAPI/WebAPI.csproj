@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aplicacion-BL\Aplicacion.csproj" />
+    <ProjectReference Include="..\Dominio-ML\Dominio.csproj" />
+    <ProjectReference Include="..\Persistencia-DL\Persistencia.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+</Project>
