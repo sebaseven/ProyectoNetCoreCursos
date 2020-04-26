@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Dominio
 {
     public class Instructor
     {
-        public int InstructorId { get; set; }
+
+   [Key]
+           public int InstructorId { get; set; }
         public string Nombre { get; set; }
         public string Apellidos { get; set; }
         public string Grado { get; set; }

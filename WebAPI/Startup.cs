@@ -16,6 +16,11 @@ using Persistencia;
 using Aplicacion.Cursos;
 using FluentValidation.AspNetCore;
 using Aplicacion_BL.Cursos;
+using WebAPI.Middleware;
+using Dominio_ML;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Authentication;
 
 namespace WebAPI
 {
@@ -38,14 +43,21 @@ namespace WebAPI
             //agregamos el servicio a la api de consulta a traves de mediador/manejador
             services.AddMediatR(typeof(Consulta.Manejador).Assembly);
             services.AddControllers().AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Nuevo>());
+            var builder = services.AddIdentityCore<Usuario>();
+            // agregamos servicio Identity con la clase usuario 
+            var IdentityBuilder = new IdentityBuilder(builder.UserType,builder.Services);
+            IdentityBuilder.AddEntityFrameworkStores<CursosOnlineContext>();
+            IdentityBuilder.AddSignInManager<SignInManager<Usuario>>();
+            services.TryAddSingleton<ISystemClock,SystemClock>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ManejadorErrorMiddleWare>();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+              //  app.UseDeveloperExceptionPage();
             }
 
             //app.UseHttpsRedirection();

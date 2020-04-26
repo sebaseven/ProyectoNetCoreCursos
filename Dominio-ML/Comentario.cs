@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Dominio
 {
     public class Comentario
     {
+
+        [Key]
         public int ComentarioId { get; set; }
         public string Alumno { get; set; }
         public int Puntaje { get; set; }

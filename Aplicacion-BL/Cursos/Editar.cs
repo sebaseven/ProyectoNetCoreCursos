@@ -40,7 +40,8 @@ namespace Aplicacion.Cursos
                 var curso = await _context.Curso.FindAsync(request.CursoId);
                 if (curso == null)
                 {
-                    throw new Exception("NO se encontro el curso");
+                    // throw new Exception("No se encontro el curso");
+                    throw new ManejadorErrores.ManejadorExcepcion(System.Net.HttpStatusCode.NotFound, new { mensaje = "No se encontro el curso" });
                 }
                 else
                 {

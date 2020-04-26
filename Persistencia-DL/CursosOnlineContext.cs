@@ -1,8 +1,10 @@
 using Dominio;
+using Dominio_ML;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace Persistencia
 {
-    public class CursosOnlineContext : DbContext
+    public class CursosOnlineContext : IdentityDbContext<Usuario>
     {
         public CursosOnlineContext(DbContextOptions options) : base(options)
         {
@@ -11,6 +13,8 @@ namespace Persistencia
         //Uno a muchos le agregams la fk
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
+            base.OnModelCreating(modelbuilder);
+            //Relacion entre clases
             modelbuilder.Entity<CursoInstructor>().HasKey(ci => new { ci.InstructorId, ci.CursoId });
         }
         //Seteo referencias a las clases DB

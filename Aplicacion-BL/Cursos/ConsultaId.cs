@@ -23,6 +23,13 @@ namespace Aplicacion.Cursos
             public async Task<Curso> Handle(CursoUnico request, CancellationToken cancellationToken)
             {
                 var curso = await _context.Curso.FindAsync(request.Id);
+    
+                    if (curso == null)
+                    {
+                        // throw new Exception("No se encontro el curso");
+                        throw new ManejadorErrores.ManejadorExcepcion(System.Net.HttpStatusCode.NotFound, new { mensaje = "No se encontro el curso" });
+                    }
+
                 return curso;
             }
         }
