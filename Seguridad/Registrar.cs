@@ -1,89 +1,93 @@
-﻿using Aplicacion.Contratos;
-using Aplicacion.ManejadorErrores;
-using Aplicacion.Seguridad;
-using Dominio_ML;
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Persistencia;
-using System;
-using System.Collections.Generic;
+﻿using System.Security.Cryptography.X509Certificates;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Aplicacion.Contratos;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Persistencia;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System;
+using FluentValidation;
+using Dominio_ML;
+using Aplicacion.ManejadorErrores;
 
-namespace Seguridad
+namespace Aplicacion.Seguridad
 {
     public class Registrar
     {
         public class Ejecuta : IRequest<UsuarioData>
         {
-            public string Nombre { get; set; }
-            public string Apellidos { get; set; }
+            public string NombreCompleto { get; set; }
             public string Email { get; set; }
             public string Password { get; set; }
-            public string UserName { get; set; }
+            public string Username { get; set; }
         }
-        public class EjecutaValidador : AbstractValidator<Ejecuta> {
-           public EjecutaValidador()
-           {
-               RuleFor(x => x.Apellidos).NotEmpty();
-               RuleFor(x => x.Email).NotEmpty();
-               RuleFor(x => x.Nombre).NotEmpty();
-               RuleFor(x => x.Password).NotEmpty();
-               RuleFor(x => x.UserName).NotEmpty();
-           }
+
+        public class EjecutaValidador : AbstractValidator<Ejecuta>
+        {
+            public EjecutaValidador()
+            {
+                RuleFor(x => x.NombreCompleto).NotEmpty();
+                RuleFor(x => x.Email).NotEmpty();
+                RuleFor(x => x.Password).NotEmpty();
+                RuleFor(x => x.Username).NotEmpty();
+            }
         }
-        public class Manejador : IRequestHandler<Ejecuta,UsuarioData>
+
+
+
+        public class Manejador : IRequestHandler<Ejecuta, UsuarioData>
         {
             private readonly CursosOnlineContext _context;
-
-            private readonly UserManager<Usuario> _usuariomanager;
-
-            private readonly IJwtGenerador _IJwtGenerador;
-
-            public Manejador(CursosOnlineContext context, UserManager<Usuario> usuariomanager, IJwtGenerador IJwtGenerador)
+            private readonly UserManager<Usuario> _userManager;
+            private readonly IJwtGenerador _jwtGenerador;
+            public Manejador(CursosOnlineContext context, UserManager<Usuario> userManager, IJwtGenerador jwtGenerador)
             {
-                context = _context;
-                usuariomanager = _usuariomanager;
-                IJwtGenerador = _IJwtGenerador;
-
+                _context = context;
+                _userManager = userManager;
+                _jwtGenerador = jwtGenerador;
             }
+
             public async Task<UsuarioData> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                //valido que no exista el email
                 var existe = await _context.Users.Where(x => x.Email == request.Email).AnyAsync();
                 if (existe)
                 {
-                    throw new ManejadorExcepcion(System.Net.HttpStatusCode.BadRequest, new { mensaje = "Ya existe un usuario con ese EMail" });
+                    throw new ManejadorExcepcion(HttpStatusCode.BadRequest, new { mensaje = "Existe ya un usuario registrado con este email" });
                 }
-                var existeusername = await _context.Users.Where(x => x.UserName == request.UserName).AnyAsync();
-                if (existeusername)
+
+                var existeUserName = await _context.Users.Where(x => x.UserName == request.Username).AnyAsync();
+                if (existeUserName)
                 {
-                    throw new ManejadorExcepcion(System.Net.HttpStatusCode.BadRequest, new { mensaje = "Ya existe un usuario con ese UserName" });
+                    throw new ManejadorExcepcion(HttpStatusCode.BadRequest, new { mensaje = "Existe ya un usuario con este username" });
                 }
+
+
                 var usuario = new Usuario
                 {
-                    NombreCompleto = request.Nombre + " " + request.Apellidos,
+                    NombreCompleto = request.NombreCompleto,
                     Email = request.Email,
-                    UserName=request.UserName
+                    UserName = request.Username
                 };
-                var result = await _usuariomanager.CreateAsync(usuario, request.Password);
-                if (result.Succeeded)
+
+                var resultado = await _userManager.CreateAsync(usuario, request.Password);
+                if (resultado.Succeeded)
                 {
-                    return new UsuarioData { 
-                    NombreCompleto =usuario.NombreCompleto,
-                    Token = _IJwtGenerador.CrearToken(usuario),
-                    UserName = usuario.UserName
+                    return new UsuarioData
+                    {
+                        NombreCompleto = usuario.NombreCompleto,
+                        Token = _jwtGenerador.CrearToken(usuario),
+                        UserName = usuario.UserName,
+                        EMail = usuario.Email
                     };
                 }
-                else { throw new Exception("No se pudo agregar el usuario"); }
+
+
+
+                throw new Exception("No se pudo agregar al nuevo usuario");
             }
         }
     }
-
 }
-
-

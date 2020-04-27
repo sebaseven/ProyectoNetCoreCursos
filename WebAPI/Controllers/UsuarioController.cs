@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         }
         //http://localhost:5000/api/usuario/registrar
         [HttpPost("registrar")]
-        public async Task<ActionResult<UsuarioData>> Registrar(Registrar.Ejecuta data)
+        public async Task<ActionResult<UsuarioData>> Registrar([FromBody] Registrar.Ejecuta data)
         {
             return await mediator.Send(data);
 

@@ -28,6 +28,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Aplicacion.Seguridad;
 
 namespace WebAPI
 {
@@ -50,6 +51,7 @@ namespace WebAPI
             });
             //agregamos el servicio a la api de consulta a traves de mediador/manejador
             services.AddMediatR(typeof(Consulta.Manejador).Assembly);
+            services.AddMediatR(typeof(Registrar.Manejador).Assembly);
             //Agregamos Validacion de request en todos los crtollers
             services.AddControllers(opt =>
             {
