@@ -4,6 +4,7 @@ using Aplicacion.Cursos;
 using Aplicacion_BL.Cursos;
 using Dominio;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -22,6 +23,7 @@ namespace WebAPI.Controllers
         //metodo para devolver al cliente lista de cursos
     
         [HttpGet]
+       // [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<List<Curso>>> Get()
         {
             //creamos la transaccion, nombre de la clase que quiero devolver --> consulta, adentro de esa clase esta otra que es justamente ListaCursos
